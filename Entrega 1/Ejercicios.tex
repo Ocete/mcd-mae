@@ -1,0 +1,113 @@
+\documentclass[a4paper]{article} 
+\input{head}
+
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage[shortlabels]{enumitem}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\usepackage{cancel}
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION
+%-------------------------------
+
+\fancyhead[C]{}
+\hrule \medskip % Upper rule
+\begin{minipage}{0.295\textwidth} 
+\raggedright
+\footnotesize
+José Antonio Álvarez Ocete \hfill\\   
+77553417Q \hfill\\
+joseantonio.alvarezo@estudiante.uam.es
+\end{minipage}
+\begin{minipage}{0.4\textwidth} 
+\centering 
+\large 
+Ejercicios\\ 
+\normalsize 
+Métodos Avanzados en Estadística\\ 
+\end{minipage}
+\begin{minipage}{0.295\textwidth} 
+\raggedleft
+\today\hfill\\
+\end{minipage}
+\medskip\hrule 
+\bigskip
+	
+%-------------------------------
+%	CONTENTS
+%-------------------------------
+
+\section*{Ejercicio 2.}
+
+\textbf{Enunciado.} Sea $X_1, \ldots, X_n$ una muestra de $n$ observaciones \emph{iid} de una distribución $F$ con esperanza $\mu$ y varianza $\sigma^2$, y sea $X_1^*, \ldots, X_n^*$ una muestra de $n$ observaciones de la distribución empírica de la muestra original $F_n$. Calcula las siguientes cantidades: \\
+
+\begin{enumerate}[a)]
+	\item $\E_{F_n}(\bar X_n^*) := \E(\bar X_n^* | X_1, \ldots, X_n)$
+	
+	Esta esperanza nos supone un cálculo directo utilizando la linealidad de la esperanza:
+	
+	\[
+		\E_{F_n}(\bar X_n^*) = \E_{F_n} \bigg( \frac{1}{n} \sum_{i=1}^n X_i^* \bigg) = \frac{1}{n} \sum_{i=1}^n \E_{F_n}(X_i^*) \stackrel{\text{iid}}{=} \frac{1}{n} \cdot n \ \E_{F_n}(X_1^*) = \bar x
+	\]
+	
+	\item $\E_{F}(\bar X_n^*)$
+	
+	Por un proceso análogo al anterior podemos obtener que:
+	
+	\[
+		\E_{F}(\bar X_n^*) = \E_{F} \bigg( \frac{1}{n} \sum_{i=1}^n X_i^* \bigg) = \frac{1}{n} \sum_{i=1}^n \E_{F}(X_i^*) \stackrel{\text{iid}}{=} \frac{1}{n} \cdot n \ \E_{F}(X_1^*) = \E_{F}(X_1^*)
+	\]
+	
+	Sin embargo, $\E_{F}(X_1^*)$ no se puede calcular directamente pues depende de la muestra tomada $X_1, \ldots, X_n$. Podemos utilizar la \textbf{ley de la esperanza iterada}$\E[Y] = \E(\E(Y|X))$ y el valor calculado en el apartado anterior:
+		
+	\[
+		\E_{F}(X_1^*) = \E_{F}(\E(X_1^* | X_1, \ldots, X_n)) = \E_{F}(\E_{F_n}(X_1^*)) = \E_{F}(\bar x) = \mu
+	\]
+	
+	\item $\Var_{F_n}(\bar X_n^*) := Var(\bar X_n^* | X_1, \ldots, X_n)$
+	
+	Expresaremos esta varianza en función de la varianza muestra insesgada:
+	
+	\[
+		s^2 = \frac{1}{n-1} \bigg( \sum_i x_i^2 - n \bar x^2 \bigg) = \frac{n}{n-1} \bigg( \frac{1}{n}\sum_i x_i^2 - \bar x^2 \bigg)
+	\]
+	
+	Al ser insesgada, sabemos que $\E[s^2] = \sigma^2$. Esto nos será útil en el último apartado. Procedamos con el cálculo de la varianza:
+		
+	\[
+		\begin{split}
+			\Var_{F_n}(\bar X_n^*) & \stackrel{\text{iid}}{=} \frac{1}{n^2} \sum_{i=1}^n \Var_{F_n}(X_i^*) \\
+			& \stackrel{\text{iid}}{=} \frac{1}{n^2} \cdot n \ \Var_{F_n}(X_1^*) \\
+			& = \frac{1}{n} \bigg( \E_{F_n}( {X_1^*}^2 ) - \E_{F_n}( X_1^* )^2 \bigg) \\
+			& = \frac{1}{n} \bigg( \frac{1}{n} \sum_{i=1}^n X_i^2 - \bar x^2 \bigg) \\
+			& = \frac{n-1}{n^2} \underbrace{\frac{n}{n-1} \bigg( \frac{1}{n} \sum_{i=1}^n X_i^2 - \bar x^2 \bigg)}_{s^2} \\
+			& = \frac{n-1}{n^2} s^2 \\
+		\end{split}
+	\]
+	
+	\item $Var_{F}(\bar X_n^*)$
+	
+	Para este último apartado haremos uso de la \textbf{ley de la varianza total}:
+	
+	\[
+		\Var(Y) = \E(\Var(Y|X)) + \Var(\E(Y|X))
+	\]
+	
+	Procedemos con el cálculo de la varianza:
+	
+	\[
+		\begin{split}
+			\Var_{F}(\bar X_n^*) & = \E_{F}( \underbrace{\Var_{F_n}(\bar X^*)}_{\frac{n-1}{n^2} s^2} ) + \Var_{F}( \underbrace{\E_{F_n}(\bar X^*)}_{\bar x} )\\
+			& = \frac{n-1}{n^2} \E_{F}(s^2) + \Var_{F}( \bar x ) \\
+			& \stackrel{\text{iid}}{=} \frac{n-1}{n^2} \sigma^2 + \frac{1}{n} \Var_{F}(X_1)  \\
+			& = \frac{n-1}{n^2} \sigma^2 + \frac{1}{n} \sigma^2 \\
+			& = \frac{2n-1}{n^2} \sigma^2 \\
+		\end{split}
+	\]
+	
+\end{enumerate}
+
+\end{document}
