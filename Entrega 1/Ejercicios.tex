@@ -25,7 +25,7 @@ joseantonio.alvarezo@estudiante.uam.es
 \begin{minipage}{0.4\textwidth} 
 \centering 
 \large 
-Ejercicios\\ 
+Entrega de problemas Boostrap\\ 
 \normalsize 
 Métodos Avanzados en Estadística\\ 
 \end{minipage}
@@ -112,16 +112,23 @@ Métodos Avanzados en Estadística\\
 
 \section*{Ejercicio 7.}
 
-Importamos los paquetes necesarios:
+\textbf{Enunciado.} Sea $F$ una distribución con media $\mu$, varianza $\sigma^2$ y coeficiente de asimetía:
+\[
+	\gamma = \frac{\E[(X - \mu)^3]}{\sigma^3}
+\]
+
+Genera $R = 1000$ muestras de observaciones iid $X_1, \ldots, X_n$ con $X_i \equiv N(0, 1)$ para $n = 100$. Para cada una de ellas, calcula tres intervalos de confianza bootstrap de nivel 95\% para $\gamma$ usando el método híbrido, el método normal y el método percentil. Determina el porcentaje de intervalos que contienen al parámetro en cada caso. Repite el ejercicio con muestras procedentes de una distribución exponencial de parámetro $\lambda = 1$. \\
+
+Resolveremos este ejercicio utilizando R. Se adjunta el cuaderno de Rmarkdown, en caso de que el resto del ejercicio sea más cómodo de visualizar en dicho formato puede utilizar Rstudio para ello. Importamos los paquetes necesarios:
 
 \begin{Shaded}
 	\begin{Highlighting}[]
-		\KeywordTok{library}\NormalTok{(tidyverse)}
-		\KeywordTok{library}\NormalTok{(gapminder)}
-		\KeywordTok{library}\NormalTok{(comprehenr)}
-		\KeywordTok{library}\NormalTok{(ggplot2)}
-		\KeywordTok{library}\NormalTok{(dplyr)}
-		\KeywordTok{theme_set}\NormalTok{(}\KeywordTok{theme_bw}\NormalTok{())}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(gapminder)}
+\KeywordTok{library}\NormalTok{(comprehenr)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{theme_set}\NormalTok{(}\KeywordTok{theme_bw}\NormalTok{())}
 	\end{Highlighting}
 \end{Shaded}
 
@@ -133,11 +140,11 @@ conscientes de que esta varianza muestra es \(s^2\) y no \(\sigma^2\).
 
 \begin{Shaded}
 	\begin{Highlighting}[]
-		\NormalTok{asymmetry_coefficient <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(muestra) \{}
-		\NormalTok{  mean <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(muestra)}
-		\NormalTok{  sigma <-}\StringTok{ }\KeywordTok{sd}\NormalTok{(muestra)}
-		\KeywordTok{mean}\NormalTok{((muestra }\OperatorTok{-}\StringTok{ }\NormalTok{mean)}\OperatorTok{^}\DecValTok{3} \OperatorTok{/}\StringTok{ }\NormalTok{sigma)}
-		\NormalTok{\}}
+\NormalTok{asymmetry_coefficient <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(muestra) \{}
+\NormalTok{  mean <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(muestra)}
+\NormalTok{  sigma <-}\StringTok{ }\KeywordTok{sd}\NormalTok{(muestra)}
+\KeywordTok{mean}\NormalTok{((muestra }\OperatorTok{-}\StringTok{ }\NormalTok{mean)}\OperatorTok{^}\DecValTok{3} \OperatorTok{/}\StringTok{ }\NormalTok{sigma)}
+\NormalTok{\}}
 	\end{Highlighting}
 \end{Shaded}
 
@@ -147,22 +154,22 @@ diapositivas.
 
 \begin{Shaded}
 	\begin{Highlighting}[]
-		\NormalTok{plot_intervals <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(intervals, hits, theta, method_name, distribution_name) \{}
-		\NormalTok{  m <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(intervals)}
-		\NormalTok{  df <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(ic_min <-}\StringTok{ }\NormalTok{intervals[,}\DecValTok{1}\NormalTok{],}
-		\NormalTok{                   ic_max <-}\StringTok{ }\NormalTok{intervals[,}\DecValTok{2}\NormalTok{],}
-		\DataTypeTok{ind =} \DecValTok{1}\OperatorTok{:}\NormalTok{m,}
-		\DataTypeTok{hits =}\NormalTok{ hits)}
-		
-		\NormalTok{  gg <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(df) }\OperatorTok{+}
-		\StringTok{    }\KeywordTok{geom_linerange}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xmin=}\NormalTok{ic_min, }\DataTypeTok{xmax=}\NormalTok{ic_max, }\DataTypeTok{y=}\NormalTok{ind, }\DataTypeTok{col=}\NormalTok{hits)) }\OperatorTok{+}
-		\StringTok{    }\KeywordTok{scale_color_hue}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"NO"}\NormalTok{, }\StringTok{"SÍ"}\NormalTok{)) }\OperatorTok{+}
-		\StringTok{    }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =}\NormalTok{ theta), }\DataTypeTok{linetype =} \DecValTok{2}\NormalTok{) }\OperatorTok{+}
-		\StringTok{    }\KeywordTok{theme_bw}\NormalTok{() }\OperatorTok{+}
-		\StringTok{    }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y =} \StringTok{'Muestras'}\NormalTok{, }\DataTypeTok{x =} \StringTok{'Intervalos (nivel 0.95)'}\NormalTok{,}
-		\DataTypeTok{title =} \KeywordTok{paste}\NormalTok{(}\StringTok{'IC -'}\NormalTok{, method_name, }\StringTok{'para'}\NormalTok{, distribution_name, }\DataTypeTok{sep=}\StringTok{' '}\NormalTok{))}
-		\KeywordTok{print}\NormalTok{(gg)}
-		\NormalTok{\}}
+\NormalTok{plot_intervals <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(intervals, hits, theta, method_name, distribution_name) \{}
+\NormalTok{  m <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(intervals)}
+\NormalTok{  df <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(ic_min <-}\StringTok{ }\NormalTok{intervals[,}\DecValTok{1}\NormalTok{],}
+\NormalTok{                   ic_max <-}\StringTok{ }\NormalTok{intervals[,}\DecValTok{2}\NormalTok{],}
+\DataTypeTok{ind =} \DecValTok{1}\OperatorTok{:}\NormalTok{m,}
+\DataTypeTok{hits =}\NormalTok{ hits)}
+
+\NormalTok{  gg <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(df) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_linerange}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xmin=}\NormalTok{ic_min, }\DataTypeTok{xmax=}\NormalTok{ic_max, }\DataTypeTok{y=}\NormalTok{ind, }\DataTypeTok{col=}\NormalTok{hits)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_color_hue}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"NO"}\NormalTok{, }\StringTok{"SÍ"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =}\NormalTok{ theta), }\DataTypeTok{linetype =} \DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme_bw}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y =} \StringTok{'Muestras'}\NormalTok{, }\DataTypeTok{x =} \StringTok{'Intervalos (nivel 0.95)'}\NormalTok{,}
+\DataTypeTok{title =} \KeywordTok{paste}\NormalTok{(}\StringTok{'IC -'}\NormalTok{, method_name, }\StringTok{'para'}\NormalTok{, distribution_name, }\DataTypeTok{sep=}\StringTok{' '}\NormalTok{))}
+\KeywordTok{print}\NormalTok{(gg)}
+\NormalTok{\}}
 	\end{Highlighting}
 \end{Shaded}
 
@@ -173,39 +180,39 @@ utilizando el método proporcionado por parámetro.
 
 \begin{Shaded}
 	\begin{Highlighting}[]
-		\NormalTok{sample_dist <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(distribution, n) \{}
-		\ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'normal'}\NormalTok{) \{}
-		\KeywordTok{rnorm}\NormalTok{(n, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}
-		\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'exponential'}\NormalTok{) \{}
-		\KeywordTok{rexp}\NormalTok{(n, }\DecValTok{1}\NormalTok{)}
-		\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
-		\KeywordTok{print}\NormalTok{(}\StringTok{'Distribution not supported'}\NormalTok{)}
-		\NormalTok{  \}}
-		\NormalTok{\}}
-		
-		\NormalTok{compute_interval <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(method, gammas_bootstrap, gamma_original, alfa) \{}
-		\ControlFlowTok{if}\NormalTok{ (method }\OperatorTok{==}\StringTok{ 'Método híbrido'}\NormalTok{) \{}
-		\CommentTok{# Metodo hibrido}
-		\NormalTok{    n =}\StringTok{ }\KeywordTok{length}\NormalTok{(gammas_bootstrap)}
-		\NormalTok{    T_bootstrap <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(n) }\OperatorTok{*}\StringTok{ }\NormalTok{(gammas_bootstrap }\OperatorTok{-}\StringTok{ }\NormalTok{gamma_original)}
-		\NormalTok{    ic_min <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{-}\StringTok{  }\KeywordTok{quantile}\NormalTok{(T_bootstrap, }\DecValTok{1}\OperatorTok{-}\NormalTok{alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(n)}
-		\NormalTok{    ic_max  <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{-}\StringTok{  }\KeywordTok{quantile}\NormalTok{(T_bootstrap, alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(n)}
-		\KeywordTok{c}\NormalTok{(ic_min, ic_max)}
-		\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (method }\OperatorTok{==}\StringTok{ 'Método normal'}\NormalTok{) \{}
-		\CommentTok{# Metodo normal}
-		\NormalTok{    et_boostrap <-}\StringTok{ }\KeywordTok{sd}\NormalTok{(gammas_bootstrap)}
-		\NormalTok{    ic_min <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{+}\StringTok{ }\KeywordTok{qnorm}\NormalTok{(alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}\OperatorTok{*}\NormalTok{et_boostrap}
-		\NormalTok{    ic_max  <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{-}\StringTok{ }\KeywordTok{qnorm}\NormalTok{(alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}\OperatorTok{*}\NormalTok{et_boostrap}
-		\KeywordTok{c}\NormalTok{(ic_min, ic_max)}
-		\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (method }\OperatorTok{==}\StringTok{ 'Método percentil'}\NormalTok{) \{}
-		\CommentTok{# Metodo percentil}
-		\NormalTok{    ic_min <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{(gammas_bootstrap, alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
-		\NormalTok{    ic_max  <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{(gammas_bootstrap, }\DecValTok{1}\OperatorTok{-}\NormalTok{alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
-		\KeywordTok{c}\NormalTok{(ic_min, ic_max)}
-		\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
-		\KeywordTok{print}\NormalTok{(}\StringTok{'Method not supported'}\NormalTok{)}
-		\NormalTok{  \}}
-		\NormalTok{\}}
+\NormalTok{sample_dist <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(distribution, n) \{}
+\ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'normal'}\NormalTok{) \{}
+\KeywordTok{rnorm}\NormalTok{(n, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'exponential'}\NormalTok{) \{}
+\KeywordTok{rexp}\NormalTok{(n, }\DecValTok{1}\NormalTok{)}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+\KeywordTok{print}\NormalTok{(}\StringTok{'Distribution not supported'}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\NormalTok{compute_interval <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(method, gammas_bootstrap, gamma_original, alfa) \{}
+\ControlFlowTok{if}\NormalTok{ (method }\OperatorTok{==}\StringTok{ 'Método híbrido'}\NormalTok{) \{}
+\CommentTok{# Metodo hibrido}
+\NormalTok{    n =}\StringTok{ }\KeywordTok{length}\NormalTok{(gammas_bootstrap)}
+\NormalTok{    T_bootstrap <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(n) }\OperatorTok{*}\StringTok{ }\NormalTok{(gammas_bootstrap }\OperatorTok{-}\StringTok{ }\NormalTok{gamma_original)}
+\NormalTok{    ic_min <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{-}\StringTok{  }\KeywordTok{quantile}\NormalTok{(T_bootstrap, }\DecValTok{1}\OperatorTok{-}\NormalTok{alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(n)}
+\NormalTok{    ic_max  <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{-}\StringTok{  }\KeywordTok{quantile}\NormalTok{(T_bootstrap, alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(n)}
+\KeywordTok{c}\NormalTok{(ic_min, ic_max)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (method }\OperatorTok{==}\StringTok{ 'Método normal'}\NormalTok{) \{}
+\CommentTok{# Metodo normal}
+\NormalTok{    et_boostrap <-}\StringTok{ }\KeywordTok{sd}\NormalTok{(gammas_bootstrap)}
+\NormalTok{    ic_min <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{+}\StringTok{ }\KeywordTok{qnorm}\NormalTok{(alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}\OperatorTok{*}\NormalTok{et_boostrap}
+\NormalTok{    ic_max  <-}\StringTok{ }\NormalTok{gamma_original }\OperatorTok{-}\StringTok{ }\KeywordTok{qnorm}\NormalTok{(alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}\OperatorTok{*}\NormalTok{et_boostrap}
+\KeywordTok{c}\NormalTok{(ic_min, ic_max)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (method }\OperatorTok{==}\StringTok{ 'Método percentil'}\NormalTok{) \{}
+\CommentTok{# Metodo percentil}
+\NormalTok{    ic_min <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{(gammas_bootstrap, alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
+\NormalTok{    ic_max  <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{(gammas_bootstrap, }\DecValTok{1}\OperatorTok{-}\NormalTok{alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
+\KeywordTok{c}\NormalTok{(ic_min, ic_max)}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+\KeywordTok{print}\NormalTok{(}\StringTok{'Method not supported'}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{\}}
 	\end{Highlighting}
 \end{Shaded}
 
@@ -218,42 +225,42 @@ Adicionalmente se mostrará la precisión del método.
 
 \begin{Shaded}
 	\begin{Highlighting}[]
-		\NormalTok{exercise_}\DecValTok{2}\NormalTok{ <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (distribution, method) \{}
-		\NormalTok{  R <-}\StringTok{ }\DecValTok{1000}
-		\NormalTok{  n <-}\StringTok{ }\DecValTok{100}
-		\NormalTok{  m <-}\StringTok{ }\DecValTok{1000}
+\NormalTok{exercise_}\DecValTok{2}\NormalTok{ <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (distribution, method) \{}
+\NormalTok{  R <-}\StringTok{ }\DecValTok{1000}
+\NormalTok{  n <-}\StringTok{ }\DecValTok{100}
+\NormalTok{  m <-}\StringTok{ }\DecValTok{1000}
+
+\NormalTok{  alfa <-}\StringTok{ }\FloatTok{0.05}
+\NormalTok{  theta =}\StringTok{ }\ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'normal'}\NormalTok{) }\DecValTok{0} \ControlFlowTok{else} \DecValTok{2}
+
+\NormalTok{  intervalos <-}\StringTok{ }\OtherTok{NULL}
+\NormalTok{  aciertos <-}\StringTok{ }\OtherTok{NULL}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{m) \{}
+\CommentTok{# Usar la distribución para muestrear}
+\NormalTok{    muestra_original <-}\StringTok{ }\KeywordTok{sample_dist}\NormalTok{(distribution, n)}
+\NormalTok{    gamma_original <-}\StringTok{ }\KeywordTok{asymmetry_coefficient}\NormalTok{(muestra_original)}
+
+\CommentTok{# Muestreo boostrap y computar los estimadores boostrap}
+\NormalTok{    muestras_bootstrap <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(muestra_original, n}\OperatorTok{*}\NormalTok{R, }\DataTypeTok{rep =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{    muestras_bootstrap <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(muestras_bootstrap, }\DataTypeTok{nrow =}\NormalTok{ n)}
+\NormalTok{    gammas_bootstrap <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(muestras_bootstrap, }\DecValTok{2}\NormalTok{, asymmetry_coefficient)}
+
+\CommentTok{# Computar el intervalo y el acierto}
+\NormalTok{    interv <-}\StringTok{ }\KeywordTok{compute_interval}\NormalTok{(method, gammas_bootstrap, gamma_original, alfa)}
+\NormalTok{    intervalos <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(intervalos, interv)}
+\NormalTok{    aciertos <-}\StringTok{ }\KeywordTok{c}\NormalTok{(aciertos, interv[}\DecValTok{1}\NormalTok{] }\OperatorTok{<}\StringTok{ }\NormalTok{theta }\OperatorTok{&}\StringTok{ }\NormalTok{interv[}\DecValTok{2}\NormalTok{] }\OperatorTok{>}\StringTok{ }\NormalTok{theta)}
+\NormalTok{  \}}
+
+\CommentTok{# Cálculo del accuracy}
+\NormalTok{  acc =}\StringTok{ }\DecValTok{100} \OperatorTok{*}\StringTok{ }\KeywordTok{length}\NormalTok{(aciertos[aciertos }\OperatorTok{%in%}\StringTok{ }\OtherTok{TRUE}\NormalTok{]) }\OperatorTok{/}\StringTok{ }\NormalTok{m}
+	\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(method, }\StringTok{' - accuracy: '}\NormalTok{, acc, }\StringTok{'%'}\NormalTok{, }\DataTypeTok{separator=}\StringTok{''}\NormalTok{))}
 		
-		\NormalTok{  alfa <-}\StringTok{ }\FloatTok{0.05}
-		\NormalTok{  theta =}\StringTok{ }\ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'normal'}\NormalTok{) }\DecValTok{0} \ControlFlowTok{else} \DecValTok{2}
-		
-		\NormalTok{  intervalos <-}\StringTok{ }\OtherTok{NULL}
-		\NormalTok{  aciertos <-}\StringTok{ }\OtherTok{NULL}
-		
-		\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{m) \{}
-		\CommentTok{# Usar la distribución para muestrear}
-		\NormalTok{    muestra_original <-}\StringTok{ }\KeywordTok{sample_dist}\NormalTok{(distribution, n)}
-		\NormalTok{    gamma_original <-}\StringTok{ }\KeywordTok{asymmetry_coefficient}\NormalTok{(muestra_original)}
-		
-		\CommentTok{# Muestreo boostrap y computar los estimadores boostrap}
-		\NormalTok{    muestras_bootstrap <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(muestra_original, n}\OperatorTok{*}\NormalTok{R, }\DataTypeTok{rep =} \OtherTok{TRUE}\NormalTok{)}
-		\NormalTok{    muestras_bootstrap <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(muestras_bootstrap, }\DataTypeTok{nrow =}\NormalTok{ n)}
-		\NormalTok{    gammas_bootstrap <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(muestras_bootstrap, }\DecValTok{2}\NormalTok{, asymmetry_coefficient)}
-		
-		\CommentTok{# Computar el intervalo y el acierto}
-		\NormalTok{    interv <-}\StringTok{ }\KeywordTok{compute_interval}\NormalTok{(method, gammas_bootstrap, gamma_original, alfa)}
-		\NormalTok{    intervalos <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(intervalos, interv)}
-		\NormalTok{    aciertos <-}\StringTok{ }\KeywordTok{c}\NormalTok{(aciertos, interv[}\DecValTok{1}\NormalTok{] }\OperatorTok{<}\StringTok{ }\NormalTok{theta }\OperatorTok{&}\StringTok{ }\NormalTok{interv[}\DecValTok{2}\NormalTok{] }\OperatorTok{>}\StringTok{ }\NormalTok{theta)}
-		\NormalTok{  \}}
-		
-		\CommentTok{# Cálculo del accuracy}
-		\NormalTok{  acc =}\StringTok{ }\DecValTok{100} \OperatorTok{*}\StringTok{ }\KeywordTok{length}\NormalTok{(aciertos[aciertos }\OperatorTok{%in%}\StringTok{ }\OtherTok{TRUE}\NormalTok{]) }\OperatorTok{/}\StringTok{ }\NormalTok{m}
-			\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(method, }\StringTok{' - accuracy: '}\NormalTok{, acc, }\StringTok{'%'}\NormalTok{, }\DataTypeTok{separator=}\StringTok{''}\NormalTok{))}
-				
-				\CommentTok{# Gráfico}
-				\NormalTok{  distribution_name =}\StringTok{ }\ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'normal'}\NormalTok{) }\StringTok{'N(0,1))'} \ControlFlowTok{else} \StringTok{'exp(1)'}
-				\KeywordTok{plot_intervals}\NormalTok{(intervalos, aciertos, theta,}
-				\NormalTok{                 method, distribution_name)}
-				\NormalTok{\}}
+\CommentTok{# Gráfico}
+\NormalTok{  distribution_name =}\StringTok{ }\ControlFlowTok{if}\NormalTok{ (distribution }\OperatorTok{==}\StringTok{ 'normal'}\NormalTok{) }\StringTok{'N(0,1))'} \ControlFlowTok{else} \StringTok{'exp(1)'}
+\KeywordTok{plot_intervals}\NormalTok{(intervalos, aciertos, theta,}
+\NormalTok{                 method, distribution_name)}
+\NormalTok{\}}
 			\end{Highlighting}
 		\end{Shaded}
 		
@@ -262,12 +269,12 @@ Adicionalmente se mostrará la precisión del método.
 		
 		\begin{Shaded}
 			\begin{Highlighting}[]
-				\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
-				
-				\NormalTok{methods <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Método híbrido'}\NormalTok{, }\StringTok{'Método normal'}\NormalTok{, }\StringTok{'Método percentil'}\NormalTok{)}
-				\ControlFlowTok{for}\NormalTok{ (method }\ControlFlowTok{in}\NormalTok{ methods) \{}
-				\KeywordTok{exercise_2}\NormalTok{(}\StringTok{'normal'}\NormalTok{, method)}
-				\NormalTok{\}}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+
+\NormalTok{methods <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Método híbrido'}\NormalTok{, }\StringTok{'Método normal'}\NormalTok{, }\StringTok{'Método percentil'}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{ (method }\ControlFlowTok{in}\NormalTok{ methods) \{}
+\KeywordTok{exercise_2}\NormalTok{(}\StringTok{'normal'}\NormalTok{, method)}
+\NormalTok{\}}
 			\end{Highlighting}
 		\end{Shaded}
 		
@@ -287,7 +294,7 @@ Adicionalmente se mostrará la precisión del método.
 			## [1] "Método percentil  - accuracy:  94.6 % "
 		\end{verbatim}
 		
-		\includegraphics{1figures/norm3.png}
+		\includegraphics{figures/norm3.png}
 		
 		Obtenemos así precisiones cercanas al 95\%. Este resultado era de
 		esperar pues tomamos \texttt{alfa=0.05}. Repetimos el experimento para
@@ -295,10 +302,10 @@ Adicionalmente se mostrará la precisión del método.
 		
 		\begin{Shaded}
 			\begin{Highlighting}[]
-				\NormalTok{methods <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Método híbrido'}\NormalTok{, }\StringTok{'Método normal'}\NormalTok{, }\StringTok{'Método percentil'}\NormalTok{)}
-				\ControlFlowTok{for}\NormalTok{ (method }\ControlFlowTok{in}\NormalTok{ methods) \{}
-				\KeywordTok{exercise_2}\NormalTok{(}\StringTok{'exponential'}\NormalTok{, method)}
-				\NormalTok{\}}
+\NormalTok{methods <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Método híbrido'}\NormalTok{, }\StringTok{'Método normal'}\NormalTok{, }\StringTok{'Método percentil'}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{ (method }\ControlFlowTok{in}\NormalTok{ methods) \{}
+\KeywordTok{exercise_2}\NormalTok{(}\StringTok{'exponential'}\NormalTok{, method)}
+\NormalTok{\}}
 			\end{Highlighting}
 		\end{Shaded}
 		

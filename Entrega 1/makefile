@@ -2,7 +2,7 @@ all: Ejercicios.pdf
 
 Ejercicios.pdf: Ejercicios.tex clean
 	-pdflatex --shell-escape Ejercicios.tex
-	$(MAKE) pre_clean
+	$(MAKE) clean
 
 clean:
 	rm -f *.aux *.blg *.log *.bbl *.toc *.out *.bcf *.xml *.gz
@@ -14,4 +14,4 @@ complex:
 		pdflatex --shell-escape main.tex
 		pdflatex --shell-escape main.tex
 		cp main.pdf ../thesis.pdf
-		$(MAKE) pre_clean
+		$(MAKE) clean

@@ -1,6 +1,6 @@
-\addtolength{\hoffset}{-2.25cm}
+\addtolength{\hoffset}{-1.75cm}
 \addtolength{\textwidth}{4.5cm}
-\addtolength{\voffset}{-3.25cm}
+\addtolength{\voffset}{-0.5cm}
 \addtolength{\textheight}{5cm}
 \setlength{\parskip}{0pt}
 \setlength{\parindent}{0in}
@@ -13,7 +13,7 @@
 \usepackage{charter} % Use the Charter font
 \usepackage[utf8]{inputenc} % Use UTF-8 encoding
 \usepackage{microtype} % Slightly tweak font spacing for aesthetics
-\usepackage[english, ngerman]{babel} % Language hyphenation and typographical rules
+\usepackage[english]{babel} % Language hyphenation and typographical rules
 \usepackage{amsthm, amsmath, amssymb} % Mathematical typesetting
 \usepackage{float} % Improved interface for floating objects
 \usepackage[final, colorlinks = true, 
@@ -74,20 +74,16 @@
 	\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
 \makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-	\IfFileExists{parskip.sty}{%
-		\usepackage{parskip}
-	}{% else
-		\setlength{\parindent}{0pt}
-		\setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
+\@ifundefined{KOMAClassName}{ % if non-KOMA class
+	
+}{ % if KOMA class
 	\KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-	pdftitle={Ejercicio 7},
+	pdftitle={Entrega 1},
 	pdfauthor={José Antonio Álvarez Ocete},
 	hidelinks,
 	pdfcreator={LaTeX via pandoc}}
@@ -100,6 +96,7 @@
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
 % Add ',fontsize=\small' for more characters per line
 \usepackage{framed}
+
 \definecolor{shadecolor}{RGB}{248,248,248}
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
@@ -135,6 +132,7 @@
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx,grffile}
 \makeatletter
+
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
 \makeatother
@@ -150,3 +148,7 @@
 \providecommand{\tightlist}{%
 	\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0in}
