@@ -1,0 +1,8 @@
+"0","for (i in range(n)) {
+  name <- str_c(""X"",i, sep = "", "")
+  df[name] <- rnorm(R)
+}
+"
+"2","Error in `[<-.data.frame`(`*tmp*`, name, value = c(0.394234623566951,  : 
+  replacement has 1000 rows, data has 0
+"
