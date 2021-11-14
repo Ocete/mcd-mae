@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage{pgfplots}
+\usepackage{amsthm, amsmath, amssymb}
+
+\begin{document}
+	
+	\pgfmathdeclarefunction{gauss}{2}{%
+		\pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+	}
+	
+	\begin{tikzpicture}
+		\begin{axis}[
+			no markers, domain=-3:3, samples=100, ymax=0.43,
+			axis lines=middle, xlabel=$x$, ylabel=$f(x)$,
+			height=6cm, width=15cm,
+			xtick=\empty, ytick=\empty,
+			enlargelimits=false, clip=false, axis on top,
+			every axis y label/.style={
+				at={(ticklabel* cs:1.05)},
+				anchor=south,
+			},
+			extra x ticks={0.2, 0.7, 1.2},
+			extra x tick labels={$x-\frac{h}{2}$, $x$, $x+\frac{h}{2}$},
+			]
+			
+			\addplot [fill=cyan!20, draw=none, domain=0.2:1.2] {gauss(0, 1)} \closedcycle;
+			\addplot [very thick,cyan!50!black] {gauss(0, 1)};
+			
+			\draw [yshift=0.3cm, latex-latex](axis cs:0.2,0) -- node [fill=cyan!20, yshift=0.1cm] {$h$} (axis cs:1.2,0);
+			
+			\draw (axis cs:0.7, 0.19) node[fill=cyan!20] {\large $\mathds{E} [\hat f(x)]$};
+		\end{axis}
+	\end{tikzpicture}
+	
+\end{document}

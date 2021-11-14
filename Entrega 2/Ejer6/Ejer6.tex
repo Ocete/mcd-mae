@@ -118,14 +118,65 @@ Al estudiar el sesgo y la varianza de $\hat f(x)$ para un valor de $x$ fijo, est
 Utilizamos el cambio de variable $w = \frac{x-t}{h}, dw = -\frac{dt}{h}$ e invirtiendo los límites de integración obtenemos:
 
 \begin{align}
+	\label{eq-nucleo}
 	\E \bigg[ K(\frac{x - t}{h}) \bigg] & = \int_{-\infty}^{+\infty} f(t) \; K(\frac{x - t}{h}) \; dt \\
 	& = \int_{+\infty}^{-\infty} f(x - wh) \; K(w) \; (-h) \; dw \\
 	& = h \int_{-\infty}^{+\infty} f(x - wh) \; \I_{[−1/2,1/2]}(w) \; dw \\
 	& = h \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw \\
 \end{align}
 
-Calculémos el sesgo de nuestro estimador del núcleo haciendo uso de la expresión anterior:
+Calculemos el sesgo de nuestro estimador del núcleo haciendo uso de la expresión anterior. Para ello calculamos su esperanza:
 
+\begin{align*}
+	\E [ \hat f(x)] & = \E \bigg[ \frac{1}{nh} \sum_{i=1}^n K(\frac{x - t}{h}) \bigg] \\
+	& \stackrel{\text{iid}}{=} \frac{1}{nh} \; n \E \bigg[ K(\frac{x - t}{h}) \bigg] \\
+	& \stackrel{\ref{eq-nucleo}}{=} \frac{1}{h} \; h \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw \\
+	& = \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw \\
+\end{align*}
 
+Este valor únicamente depende del punto fijado $x$, el parámetro de suavizado $h$ y la función de densidad $f$. Su valor equivale al área bajo la gráfica de $f$ en el intervalo $[x - h/2, x + h/2]$:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.8]{../figures/sesgo.pdf}
+	\caption{Representación gráfica del valor $\E [\hat f(x)]$.}
+\end{figure}
+
+Es decir, estamos aproximando el valor de una función en un punto por su integral en un intervalor centrado en dicho punto. Naturalmente, al tomar $h \rightarrow 0$, dicho valor tiende al valor del punto. Es decir, el sesgo tiende a $0$. Analíticamente:
+
+\begin{align*}
+	\text{Sesgo}(f) & = E [ \hat f(x) ] - f(x) \\
+	& = \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw - f(x) \\
+	& \stackrel{h \rightarrow \infty}{\longrightarrow} \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x) dw - f(x) \\
+	& =  f(x) \underbrace{\int_{-\frac{1}{2}}^{\frac{1}{2}}}_{= 1} dw - f(x) \\
+	& =  f(x) - f(x) = 0 \\
+\end{align*}
+
+Por otro lado, podemos darnos cuenta de lo siguiente:
+
+\begin{equation}
+	\label{eq-cuadrado}
+	K(x)^2 = K(x) \quad \forall x \in \R,
+\end{equation}
+
+pues la función indicatriz tiene por imagen el conjunto $\{0,1\}$ y la función $x \mapsto x^2$ sobre este conjunto es la identidad. Calculemos la varianza del estimador del núcleo:
+
+\begin{align*}
+	\Var [ \hat f(x)] & = \Var \bigg[ \frac{1}{nh} \sum_{i=1}^n K(\frac{x - t}{h}) \bigg] \\
+	& \stackrel{\text{iid}}{=} \frac{1}{n^2 h^2} \; n \Var \bigg[ K(\frac{x - t}{h}) \bigg] \\
+	& = \frac{1}{n h^2} \bigg( \E \bigg[ K(\frac{x - t}{h})^2 \bigg] - \E \bigg[ K(\frac{x - t}{h}) \bigg]^2 \bigg)  \\
+	& \stackrel{\ref{eq-cuadrado}}{=} \frac{1}{n h^2} \bigg( \E \bigg[ K(\frac{x - t}{h}) \bigg] - \E \bigg[ K(\frac{x - t}{h}) \bigg]^2 \bigg)  \\
+	& \stackrel{\ref{eq-nucleo}}{=} \frac{1}{n h^2} \bigg( h \; \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw - h^2 \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw\bigg) ^2 \bigg) \\
+	& = \frac{1}{n h} \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw - h \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw\bigg) ^2 \bigg) \\
+\end{align*}
+
+Finalmente probamos que la varianza tiende a $0$ si $h \rightarrow 0$ y $nh \rightarrow \infty$:
+
+\[
+	\Var [ \hat f(x)] & = \underbrace{\frac{1}{n h}}_{\hookrightarrow 0} \bigg( \underbrace{\int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw}_{\hookrightarrow f(x)} - \underbrace{h \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw\bigg) ^2}_{\hookrightarrow 0} \bigg)
+	\longrightarrow 0
+\]
+
+Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tiende a $0$, en este ejercicio lo hemos probado para el caso del núcleo indicatriz sin el uso de aproximaciones.
 
 \end{document}
