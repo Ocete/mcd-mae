@@ -212,18 +212,18 @@ citecolor = black]{hyperref} % For hyperlinks in the PDF
 Al estudiar el sesgo y la varianza de $\hat f(x)$ para un valor de $x$ fijo, estudiamos dichos valores respecto a la muestra tomada de  $X_1, \ldots, X_n$. En primer lugar, calculemos la esperanza del núcleo rectangular dado por la función indicatriz:
 
 \[
-	\E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg] = \int_{-\infty}^{+\infty} f(t) \; K\bigg(\frac{x - t}{h}\bigg) \; dt 
+	\E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg] = \int_{-\infty}^{+\infty} f(t) \; K\bigg(\frac{x - t}{h}\bigg) \; \text{t}w 
 \]
 
-Utilizamos el cambio de variable $w = \frac{x-t}{h}, dw = -\frac{dt}{h}$ e invirtiendo los límites de integración obtenemos:
+Utilizamos el cambio de variable $w = \frac{x-t}{h}, \text = -\frac{dt}{h}$ e invirtiendo los límites de integración obtenemos:
 
 \begin{align}
 	\label{eq-nucleo}
 	\begin{split}
-		\E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg] & = \int_{-\infty}^{+\infty} f(t) \; K\bigg(\frac{x - t}{h}\bigg) \; dt \\
-		& = \int_{+\infty}^{-\infty} f(x - wh) \; K(w) \; (-h) \; dw \\
-		& = h \int_{-\infty}^{+\infty} f(x - wh) \; \I_{[-1/2,1/2]}(w) \; dw \\
-		& = h \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw \\
+		\E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg] & = \int_{-\infty}^{+\infty} f(t) \; K\bigg(\frac{x - t}{h}\bigg) \; \text{t}w \\
+		& = \int_{+\infty}^{-\infty} f(x - wh) \; K(w) \; (-h) \; \text{d}w \\
+		& = h \int_{-\infty}^{+\infty} f(x - wh) \; \I_{[-1/2,1/2]}(w) \; \text{d}w \\
+		& = h \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w \\
 	\end{split}
 \end{align}
 
@@ -232,15 +232,15 @@ Calculemos el sesgo de nuestro estimador del núcleo haciendo uso de la expresi�
 \begin{align*}
 	\E [ \hat f(x)] & = \E \bigg[ \frac{1}{nh} \sum_{i=1}^n K\bigg(\frac{x - t}{h}\bigg) \bigg] \\
 	& \stackrel{\text{iid}}{=} \frac{1}{nh} \; n \E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg] \\
-	& \stackrel{(\ref{eq-nucleo})}{=} \frac{1}{h} \; h \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw \\
-	& = \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw \\
+	& \stackrel{(\ref{eq-nucleo})}{=} \frac{1}{h} \; h \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w \\
+	& = \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w \\
 \end{align*}
 
 Este valor únicamente depende del punto fijado $x$, el parámetro de suavizado $h$ y la función de densidad $f$. Su valor equivale al área bajo la gráfica de $f$ en el intervalo $[x - h/2, x + h/2]$, como se puede apreciar en la figura \ref{fig-sesgo}. \\
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.9]{Ejer6/sesgo}
+	\includegraphics[width=17cm]{figures/sesgo}
 	\caption{Representación gráfica del valor $\E [\hat f(x)]$.}
 	\label{fig-sesgo}
 \end{figure}
@@ -249,9 +249,9 @@ Es decir, estamos aproximando el valor de una función en un punto por su integr
 
 \begin{align*}
 	\text{Sesgo}(f) & = E [ \hat f(x) ] - f(x) \\
-	& = \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw - f(x) \\
-	& \stackrel{h \rightarrow \infty}{\longrightarrow} \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x) dw - f(x) \\
-	& =  f(x) \underbrace{\int_{-\frac{1}{2}}^{\frac{1}{2}} dw}_{= 1} - f(x) \\
+	& = \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w - f(x) \\
+	& \stackrel{h \rightarrow \infty}{\longrightarrow} \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x) \text{d}w - f(x) \\
+	& =  f(x) \underbrace{\int_{-\frac{1}{2}}^{\frac{1}{2}} \text{d}w}_{= 1} - f(x) \\
 	& =  f(x) - f(x) = 0 \\
 \end{align*}
 
@@ -269,14 +269,14 @@ pues la función indicatriz tiene por imagen el conjunto $\{0,1\}$ y la función
 	& \stackrel{\text{iid}}{=} \frac{1}{n^2 h^2} \; n \Var \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg] \\
 	& = \frac{1}{n h^2} \bigg( \E \bigg[ K\bigg(\frac{x - t}{h}\bigg)^2 \bigg] - \E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg]^2 \bigg)  \\
 	& \stackrel{(\ref{eq-cuadrado})}{=} \frac{1}{n h^2} \bigg( \E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg] - \E \bigg[ K\bigg(\frac{x - t}{h}\bigg) \bigg]^2 \bigg)  \\
-	& \stackrel{(\ref{eq-nucleo})}{=} \frac{1}{n h^2} \bigg( h \; \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw - h^2 \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw\bigg) ^2 \bigg) \\
-	& = \frac{1}{n h} \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw - h \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw\bigg) ^2 \bigg) \\
+	& \stackrel{(\ref{eq-nucleo})}{=} \frac{1}{n h^2} \bigg( h \; \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w - h^2 \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w\bigg) ^2 \bigg) \\
+	& = \frac{1}{n h} \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w - h \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w\bigg) ^2 \bigg) \\
 \end{align*}
 
 Finalmente probamos que la varianza tiende a $0$ si $h \rightarrow 0$ y $nh \rightarrow \infty$:
 
 \[
-	\Var [ \hat f(x)] = \underbrace{\frac{1}{n h}}_{\hookrightarrow 0} \bigg( \underbrace{\int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw}_{\hookrightarrow f(x)} - \underbrace{h \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) dw\bigg) ^2}_{\hookrightarrow 0} \bigg)
+	\Var [ \hat f(x)] = \underbrace{\frac{1}{n h}}_{\hookrightarrow 0} \bigg( \underbrace{\int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w}_{\hookrightarrow f(x)} - \underbrace{h \; \bigg( \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w\bigg) ^2}_{\hookrightarrow 0} \bigg)
 	\longrightarrow 0
 \]
 
@@ -317,7 +317,7 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 
 \NormalTok{graf1 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(df, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{x, }\DataTypeTok{y=}\NormalTok{pdf)) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_ribbon}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin=}\DecValTok{0}\NormalTok{, }\DataTypeTok{ymax=}\NormalTok{pdf), }\DataTypeTok{fill=}\StringTok{"lightblue"}\NormalTok{, }\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{, }\DataTypeTok{alpha=}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Probability Density Function"}\NormalTok{)}
+\StringTok{  }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Probability  Function"}\NormalTok{)}
 
 \NormalTok{graf2 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(df, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{x, }\DataTypeTok{y=}\NormalTok{cdf)) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_ribbon}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin=}\DecValTok{0}\NormalTok{, }\DataTypeTok{ymax=}\NormalTok{cdf), }\DataTypeTok{fill=}\StringTok{"lightblue"}\NormalTok{, }\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{, }\DataTypeTok{alpha=}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
@@ -328,12 +328,14 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 \end{Highlighting}
 \end{Shaded}
 
-	\includegraphics{1_files/figure-latex/unnamed-chunk-2-1.pdf}
+	\includegraphics{figures/7a}
 	
-	\item Simula una muestra de tamañoo 20 de esta distribución. A continuación, representa en los
+	\item Simula una muestra de tamaño $20$ de esta distribución. A continuación, representa en los
 	mismos gráficos del apartado (a) las estimaciones de $F$ y $f$ obtenidas respectivamente
 	mediante la función de distribución empírica $F_n$ y un estimador del núcleo $\hat f$ obtenidos
 	a partir de la muestra simulada.
+	
+	Para este apartado, generamos una muestra del tamaño especificado y estimamos las funciones de densidad generando un estimador del núcleo utilizando el comando de R \KeywordTok{density}. Pintamos ambas estimaciones sobre las gráficas anteriores para poder comprobar los resultados.
 	
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -366,13 +368,17 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 \end{Highlighting}
 \end{Shaded}
 
-	\includegraphics{1_files/figure-latex/unnamed-chunk-3-1.pdf}
+	\includegraphics{figures/7b}
+	
+	Como podemos apreciar, ambas funciones son notablemente parecidas a las objetivo. Sin embargo, no se obtienen valores de estas aproximaciones tan buenos para todas las semillas. Basta con relanzar el experimento con otra semilla y comparar los resultados para apreciarlo.
 	
 	\item Verifica empíricamente el grado de aproximación alcanzado en las estimaciones de $F$
 	y $f$. Para ello, genera $200$ muestras de tamaño $20$ y para cada una de ellas evalúa el
 	error (medido en la norma del supremo, es decir, el máximo de las diferencias entre las
 	funciones) cometido al aproximar $F$ por $F_n$ y $f$ por $\hat f$. Por último, calcula el promedio
 	de los $200$ errores obtenidos.
+	
+	
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -443,8 +449,9 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 ## Mean p-value for pdf:  0.0017868
 \end{verbatim}
 
+
+	
 	
 \end{enumerate}
-
 
 \end{document}
