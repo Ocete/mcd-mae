@@ -210,7 +210,7 @@ c)
   
 \NormalTok{  ecdf_estimada <-}\StringTok{ }\KeywordTok{ecdf}\NormalTok{(muestra)}
 \NormalTok{  theoric_cdf_ys <-}\StringTok{ }\KeywordTok{pbeta}\NormalTok{(muestra, alpha, beta)}
-\NormalTok{  ks_cdf <-}\StringTok{ }\KeywordTok{ks.test}\NormalTok{(}\KeywordTok{ecdf_estimada}\NormalTok{(muestra), }\StringTok{"pbeta"}\NormalTok{, alpha, beta)}
+\NormalTok{  ks_cdf <-}\StringTok{ }\KeywordTok{ks.test}\NormalTok{(}\KeywordTok{ecdf_estimada}\NormalTok{(muestra), }\NormalTok{ theoric_cdf_ys)}
   
 \NormalTok{  errors_pdf <-}\StringTok{ }\KeywordTok{c}\NormalTok{(errors_pdf, ks_pdf}\OperatorTok{$}\NormalTok{statistic)}
 \NormalTok{  p_values_pdf <-}\StringTok{ }\KeywordTok{c}\NormalTok{(p_values_pdf, ks_pdf}\OperatorTok{$}\NormalTok{p.value)}

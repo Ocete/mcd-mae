@@ -236,7 +236,7 @@ Calculemos el sesgo de nuestro estimador del núcleo haciendo uso de la expresi�
 	& = \int_{-\frac{1}{2}}^{\frac{1}{2}} f(x - wh) \text{d}w \\
 \end{align*}
 
-Este valor únicamente depende del punto fijado $x$, el parámetro de suavizado $h$ y la función de densidad $f$. Su valor equivale al área bajo la gráfica de $f$ en el intervalo $[x - h/2, x + h/2]$, como se puede apreciar en la figura \ref{fig-sesgo}. \\
+Este valor únicamente depende del punto fijado $x$, el parámetro de suavizado $h$ y la función de densidad $f$. Su valor equivale al área bajo la gráfica de $f$ en el intervalo $[x - h/2, x + h/2]$, como se puede apreciar en la figura \ref{fig-sesgo}.
 
 \begin{figure}[H]
 	\centering
@@ -330,10 +330,7 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 
 	\includegraphics{figures/7a}
 	
-	\item Simula una muestra de tamaño $20$ de esta distribución. A continuación, representa en los
-	mismos gráficos del apartado (a) las estimaciones de $F$ y $f$ obtenidas respectivamente
-	mediante la función de distribución empírica $F_n$ y un estimador del núcleo $\hat f$ obtenidos
-	a partir de la muestra simulada.
+	\item Simula una muestra de tamaño $20$ de esta distribución. A continuación, representa en los mismos gráficos del apartado (a) las estimaciones de $F$ y $f$ obtenidas respectivamente mediante la función de distribución empírica $F_n$ y un estimador del núcleo $\hat f$ obtenidos a partir de la muestra simulada.
 	
 	Para este apartado, generamos una muestra del tamaño especificado y estimamos las funciones de densidad generando un estimador del núcleo utilizando el comando de R \KeywordTok{density}. Pintamos ambas estimaciones sobre las gráficas anteriores para poder comprobar los resultados.
 	
@@ -369,17 +366,26 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 \end{Shaded}
 
 	\includegraphics{figures/7b}
+	\label{fig-compare}
 	
 	Como podemos apreciar, ambas funciones son notablemente parecidas a las objetivo. Sin embargo, no se obtienen valores de estas aproximaciones tan buenos para todas las semillas. Basta con relanzar el experimento con otra semilla y comparar los resultados para apreciarlo.
 	
-	\item Verifica empíricamente el grado de aproximación alcanzado en las estimaciones de $F$
-	y $f$. Para ello, genera $200$ muestras de tamaño $20$ y para cada una de ellas evalúa el
-	error (medido en la norma del supremo, es decir, el máximo de las diferencias entre las
-	funciones) cometido al aproximar $F$ por $F_n$ y $f$ por $\hat f$. Por último, calcula el promedio
-	de los $200$ errores obtenidos.
+	\item Verifica empíricamente el grado de aproximación alcanzado en las estimaciones de $F$	y $f$. Para ello, genera $200$ muestras de tamaño $20$ y para cada una de ellas evalúa el error (medido en la norma del supremo, es decir, el máximo de las diferencias entre las funciones) cometido al aproximar $F$ por $F_n$ y $f$ por $\hat f$. Por último, calcula el promedio de los $200$ errores obtenidos.
 	
+	Para computar la diferencia entre ambas funciones utilizaremos el \href{https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test}{test de Kolmogorov-Smirnov}. La función \KeywordTok{ks.test} computará dicho test y nos devolverá el estadístico y el p-value entre otras elementos. El estadístico viene dado por la siguiente expresión:
+		
+\[
+	D_n = \sup_{x}|F_n(x) - F(x)|
+\]
+		
+	Obteniendo así la distancia buscada.
 	
-
+	En primer lugar, comparamos las funciones $f$ y $\hat f$. Para ello obtendremos una muestra de la función beta utilizando la función \KeywordTok{rbeta} y un estimador del núcleo \emph{estimador\_nucleo} con \KeywordTok{density}. Compararemos las distribuciones generadas a partir de los valores \emph{estimador\_nucleo\$y} de estimador del núcleo y las verdaderas imágenes de dichos valores mediante la distibución beta, \KeywordTok{dbeta}\emph{(estimador\_nucleo\$x, alpha, beta)}.
+		
+	En segundo lugar, comparamos la distribución empírica y la de distribución. Para obtener la primera podemos utilizar la función \KeywordTok{ecdf} de R. Acto seguido obtendremos las alturas para los valores de nuestra muestra evaluando la función de distribución empírica: \KeywordTok{ecdf\_estimada}\emph{(muestra)}. Para obtener la función de distribución de la distribución beta para poder comparar ambas evaluámos \KeywordTok{pbeta}\emph{(muestra, alpha, beta)}. Basta con evaluar en estos puntos la función de distribución pues la distancia máxima se obtendrá en alguno de estos puntos.
+	
+	Veamos los resultados obtenidos.
+		
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
@@ -403,7 +409,7 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 
 \NormalTok{  ecdf_estimada <-}\StringTok{ }\KeywordTok{ecdf}\NormalTok{(muestra)}
 \NormalTok{  theoric_cdf_ys <-}\StringTok{ }\KeywordTok{pbeta}\NormalTok{(muestra, alpha, beta)}
-\NormalTok{  ks_cdf <-}\StringTok{ }\KeywordTok{ks.test}\NormalTok{(}\KeywordTok{ecdf_estimada}\NormalTok{(muestra), }\StringTok{"pbeta"}\NormalTok{, alpha, beta)}
+\NormalTok{  ks_cdf <-}\StringTok{ }\KeywordTok{ks.test}\NormalTok{(}\KeywordTok{ecdf_estimada}\NormalTok{(muestra), }\NormalTok{ theoric_cdf_ys)}
 
 \NormalTok{  errors_pdf <-}\StringTok{ }\KeywordTok{c}\NormalTok{(errors_pdf, ks_pdf}\OperatorTok{$}\NormalTok{statistic)}
 \NormalTok{  p_values_pdf <-}\StringTok{ }\KeywordTok{c}\NormalTok{(p_values_pdf, ks_pdf}\OperatorTok{$}\NormalTok{p.value)}
@@ -416,7 +422,7 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 \end{Shaded}
 
 \begin{verbatim}
-## Mean error in cdf:  0.4115441
+## Mean error in cdf:  0.1865
 \end{verbatim}
 
 \begin{Shaded}
@@ -426,7 +432,7 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 \end{Shaded}
 
 \begin{verbatim}
-## Mean p-value for cdf:  0.4095036
+## Mean p-value for cdf:  0.1897113
 \end{verbatim}
 
 \begin{Shaded}
@@ -449,8 +455,13 @@ Aunque ya probamos que el error cuadrático medio para un núcleo cualquiera tie
 ## Mean p-value for pdf:  0.0017868
 \end{verbatim}
 
+Obtenemos una distancia media entre $f$ y $\hat f$ de $0.1869434$, y una distancia media de $0.1865$ entre $F$ y $F_n$. Estas distancias encajan intuitivamente con las representadas en la figura \ref{fig-compare} del apartado anterior.
 
-	
+Mostramos adicionalmente la media de los p-values obtenidos. Es especialmente interesante comentar la gran diferencia entre ambos valores: Podemos estar seguro con nivel de confianza $99\%$ de que ambas funciones de distribución vienen de la misma distribución, pero tenemos mucha más inseguridad respecto a las funciones de densidad.
+
+Por un lado, el test de Kolmogorov-Smirnov está basado en la hipótesis de que ambas funciones son funciones de distribución, lo que no es cierto en el caso de las funciones de densidad. A pesar de haber obtenido valores medios de distancias similares para ambas comparativas, mayores variaciones en la distancias entre las funciones de densidad podrían afectar significativamente al resultado de los tests. Mostramos a continuación la desviación típica de cada conjunto de p-values obtenido:
+
+
 	
 \end{enumerate}
 
