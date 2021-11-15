@@ -15,6 +15,9 @@ library(comprehenr)
 library(ggplot2)
 library(dplyr)
 library(ggpubr)
+
+defaultW <- getOption("warn")
+options(warn = -1)
 theme_set(theme_bw())
 ```
 
@@ -87,51 +90,29 @@ p_values_cdf <- NULL
 for (i in 1:m){
   muestra <- rbeta(n, alpha, beta)
   
-  my_ecdf <- ecdf(muestra)
-  ks_cdf <- ks.test(my_ecdf, "pbeta", alpha, beta, exact=FALSE)
+  estimador_nucleo <- density(muestra)
+  theoric_pdf_ys <- dbeta(estimador_nucleo$x, alpha, beta)
+  ks_pdf <- ks.test(estimador_nucleo$y, theoric_pdf_ys)
+  
+  ecdf_estimada <- ecdf(muestra)
+  theoric_cdf_ys <- pbeta(muestra, alpha, beta)
+  ks_cdf <- ks.test(ecdf_estimada(muestra), "pbeta", alpha, beta)
+  
+  errors_pdf <- c(errors_pdf, ks_pdf$statistic)
+  p_values_pdf <- c(p_values_pdf, ks_pdf$p.value)
   errors_cdf <- c(errors_cdf, ks_cdf$statistic)
   p_values_cdf <- c(errors_cdf, ks_cdf$p.value)
-  
-  estimador_nucleo <- density(muestra)
-  ks_pdf <- ks.test(estimador_nucleo$y, "dbeta", alpha, beta)
-  errors_pdf <- c(errors_pdf,ks_pdf$statistic)
-  p_values_pdf <- c(p_values_pdf, ks_pdf$p.value)
 }
 
-cat("Mean error in cumulative density function : ", mean(errors_cdf), "\n")
-cat("Mean p-value for cumulative density function : ", mean(p_values_cdf), "\n")
-cat("Mean error in probability density function : ", mean(errors_pdf), "\n")
-cat("Mean p-value for probability density function : ", mean(p_values_pdf), "\n")
+cat("Mean error in cdf: ", mean(errors_cdf), "\n")
+cat("Mean p-value for cdf: ", mean(p_values_cdf), "\n")
+cat("Mean error in pdf: ", mean(errors_pdf), "\n")
+cat("Mean p-value for pdf: ", mean(p_values_pdf), "\n")
 ```
 
 ```{r}
-muestra <- rbeta(n, alpha, beta)
-  
-ecdf <- ecdf(muestra)
-ks_cdf <- ks.test(ecdf, "pbeta", alpha, beta)
-errors_cdf <- c(errors_cdf, ks_cdf$statistic)
-p_values_cdf <- c(errors_cdf, ks_cdf$p.value)
-
-estimador_nucleo <- density(muestra)
-ks_pdf <- ks.test(estimador_nucleo$y, "dbeta", alpha, beta)
-errors_pdf <- c(errors_pdf,ks_pdf$statistic)
-p_values_pdf <- c(p_values_pdf, ks_pdf$p.value)
-
-ks_pdf$p.value
-
-errors_cdf
-p_values_cdf
-errors_pdf
-p_values_pdf
+Sys.sleep(1)
 ```
-
-
-geom_density(aes(x = eruptions),
-             bw = 0.15,
-             fill = 'olivedrab4',
-             size = 1.2)
-             
-             
              
              
              
