@@ -1,0 +1,46 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+# Práctica 1
+
+```{r}
+library(tidyverse)
+library(gapminder)
+library(comprehenr)
+theme_set(theme_bw())
+```
+
+```{r}
+R <- 1000
+n <- 100
+mu <- 0
+var <- 1
+alfa <- 0.05
+
+metodos <- c('Método híbrido', 'Método normal', 'Método percentil')
+aciertos <- null
+intervalos <- null
+
+for (i in 1:m){
+  muestra_original <- rt(n, 1) + theta
+  mediana_original <- median(muestra_original)
+  
+  muestras_bootstrap <- sample(muestra_original, n*R, rep = TRUE)
+  muestras_bootstrap <- matrix(muestras_bootstrap, nrow = n)
+  medianas_bootstrap <- apply(muestras_bootstrap, 2, median)
+  T_bootstrap <- sqrt(n) * (medianas_bootstrap - mediana_original)
+  
+  ic_min <- mediana_original -  quantile(T_bootstrap, 1-alfa/2)/sqrt(n)
+  ic_max  <- mediana_original -  quantile(T_bootstrap, alfa/2)/sqrt(n)
+  intervalo <- rbind(intervalo, c(ic_min, ic_max))
+  acierto <- c(acierto, ic_min < theta & ic_max > theta)
+}
+```
+
+
+
+

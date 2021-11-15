@@ -1,0 +1,162 @@
+---
+title: "Ejercicio 7"
+author: "José Antonio Álvarez Ocete"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+Importamos los paquetes necesarios:
+
+```{r}
+library(tidyverse)
+library(gapminder)
+library(comprehenr)
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+theme_set(theme_bw())
+```
+
+a)
+
+```{r}
+x = seq(0, 1, length=1000)
+pdf = dbeta(x, 3, 6)
+cdf = pbeta(x, 3, 6)
+df <- data.frame(x, pdf, cdf)
+
+graf1 <- ggplot(df, aes(x=x, y=pdf)) +
+  geom_ribbon(aes(ymin=0, ymax=pdf), fill="lightblue", col="blue", alpha=0.5) +
+  ylab("Probability Density Function")
+
+graf2 <- ggplot(df, aes(x=x, y=cdf)) +
+  geom_ribbon(aes(ymin=0, ymax=cdf), fill="lightblue", col="blue", alpha=0.5) +
+  ylab("Cumulative Density Function")
+
+ggarrange(graf1, graf2, 
+          ncol = 2, nrow = 1)
+```
+
+b)
+
+```{r}
+set.seed(123)
+
+x = seq(0, 1, length=1000)
+pdf = dbeta(x, 3, 6)
+cdf = pbeta(x, 3, 6)
+df <- data.frame(x, pdf, cdf)
+
+muestra <- rbeta(20, 3, 6)
+estimador_nucleo <- density(muestra)
+df_estimator <- data.frame("x"=estimador_nucleo$x, "y"=estimador_nucleo$y)
+
+graf1 <- ggplot() +
+  geom_ribbon(data=df, aes(x=x, y=pdf, ymin=0, ymax=pdf),
+              fill="lightblue", col="blue", alpha=0.5) +
+  geom_line(data=df_estimator, aes(x=x, y=y), col="red") +
+  ylab("Probability Density Function") +
+  coord_cartesian(xlim = c(0, 1))
+
+graf2 <- ggplot() +
+  geom_ribbon(data=df, aes(x=x, y=cdf, ymin=0, ymax=cdf),
+              fill="lightblue", col="blue", alpha=0.5) +
+  stat_ecdf(data=data.frame(muestra), aes(x=muestra), color="red", geom="step") +
+  ylab("Cumulative Density Function") +
+  coord_cartesian(xlim = c(0, 1))
+
+ggarrange(graf1, graf2, ncol = 2, nrow = 1)
+```
+
+c)
+
+```{r}
+set.seed(123)
+
+n <- 20
+m <- 200
+alpha <- 3
+beta <- 6
+
+errors_pdf <- NULL
+errors_cdf <- NULL
+p_values_pdf <- NULL
+p_values_cdf <- NULL
+
+for (i in 1:m){
+  muestra <- rbeta(n, alpha, beta)
+  
+  my_ecdf <- ecdf(muestra)
+  ks_cdf <- ks.test(my_ecdf, "pbeta", alpha, beta, exact=FALSE)
+  errors_cdf <- c(errors_cdf, ks_cdf$statistic)
+  p_values_cdf <- c(errors_cdf, ks_cdf$p.value)
+  
+  estimador_nucleo <- density(muestra)
+  ks_pdf <- ks.test(estimador_nucleo$y, "dbeta", alpha, beta)
+  errors_pdf <- c(errors_pdf,ks_pdf$statistic)
+  p_values_pdf <- c(p_values_pdf, ks_pdf$p.value)
+}
+
+cat("Mean error in cumulative density function : ", mean(errors_cdf), "\n")
+cat("Mean p-value for cumulative density function : ", mean(p_values_cdf), "\n")
+cat("Mean error in probability density function : ", mean(errors_pdf), "\n")
+cat("Mean p-value for probability density function : ", mean(p_values_pdf), "\n")
+```
+
+```{r}
+muestra <- rbeta(n, alpha, beta)
+  
+ecdf <- ecdf(muestra)
+ks_cdf <- ks.test(ecdf, "pbeta", alpha, beta)
+errors_cdf <- c(errors_cdf, ks_cdf$statistic)
+p_values_cdf <- c(errors_cdf, ks_cdf$p.value)
+
+estimador_nucleo <- density(muestra)
+ks_pdf <- ks.test(estimador_nucleo$y, "dbeta", alpha, beta)
+errors_pdf <- c(errors_pdf,ks_pdf$statistic)
+p_values_pdf <- c(p_values_pdf, ks_pdf$p.value)
+
+ks_pdf$p.value
+
+errors_cdf
+p_values_cdf
+errors_pdf
+p_values_pdf
+```
+
+
+geom_density(aes(x = eruptions),
+             bw = 0.15,
+             fill = 'olivedrab4',
+             size = 1.2)
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             

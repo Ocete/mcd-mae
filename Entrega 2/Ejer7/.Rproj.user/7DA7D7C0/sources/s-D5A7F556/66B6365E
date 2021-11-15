@@ -1,0 +1,27 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1631110084744.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3123735288",
+    "id" : "66B6365E",
+    "lastKnownWriteTime" : 1633961879,
+    "last_content_update" : 1633961879749,
+    "path" : "C:/Users/Jose/Desktop/Master/MAE/1.Rmd",
+    "project_path" : "1.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "cursorPosition" : "33,60",
+        "scrollLine" : "15",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
