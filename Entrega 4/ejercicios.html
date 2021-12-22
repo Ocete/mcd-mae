@@ -14553,7 +14553,7 @@ Supongamos que queremos predecir $Y$ a partir de $X$. Responde a las siguientes 
 
 <b>b)</b> Si $X$ tiene distribución uniforme en $(0, 1)$, calcula el error de la regla de clasificación del apartado anterior (error Bayes). <br>
 
-<b>c)</b> Si $X$ tiene distribución uniforme en $(0, 1)$, calcula $\lim_{n \rightarrow \infty} \mathbb[L_n]$, donde $L_n$ es la probabilidad de error correspondiente al clasificador del vecino m´ás próximo. Compara el resultado con el del apartado anterior.
+<b>c)</b> Si $X$ tiene distribución uniforme en $(0, 1)$, calcula $\lim_{n \rightarrow \infty} \mathbb [L_n]$, donde $L_n$ es la probabilidad de error correspondiente al clasificador del vecino m´ás próximo. Compara el resultado con el del apartado anterior.
 </div>
 </div>
 </div>
@@ -14591,6 +14591,13 @@ g^*(x) =
     1 \quad \text{si } \beta x &gt; 0 \\
     0 \quad \text{si } \beta x \le 0 \\
 \end{cases}
+$$<p>Nos podríamos haber dado cuenta de que esta era la regla ótima de forma mucho más directa: estamos clasificando $1$ si la función logística es mayor que \frac{1}{2}, lo que es esencialmente a regresión logística:</p>
+$$
+g^*(x) =
+\begin{cases}
+    1 \quad \text{si } \eta(x) &gt; \frac{1}{2} \\
+    0 \quad \text{si } \eta(x) \le \frac{1}{2} \\
+\end{cases}
 $$<p>Como comprobación adicional podemos computar esta regla a partir de las distribuciones marginales. Puesto que son equivalentes, hemos de obtener el mismo resultado. Sabemos que la regla óptima asigna $1$ a $x$ si y sólo si</p>
 $$
 \begin{align*}
@@ -14617,8 +14624,7 @@ $$
     L^* &amp; = \frac{1}{2} - \frac{1}{2} \mathbb E\left[ \left|2\eta(x) - 1\right| \right] \\
     &amp; = \frac{1}{2} - \frac{1}{2} \int_{x \in \mathbb R} \left| \; 2 \frac{1}{1 + e^{−\beta x}} - 1 \right| f_X(x) \text dx \\
     &amp; = \frac{1}{2} - \frac{1}{2} \int_{x \in \mathbb R} \left| \frac{1 - e^{−\beta x}}{1 + e^{−\beta x}} \right| f_X(x) \text dx \\
-    &amp; = \frac{1}{2} - \frac{1}{2} \int_0^1 \left| \frac{1 - e^{−\beta}}{1 + e^{−\beta}} \right| \text dx \\
-    &amp; = \frac{1}{2} - \frac{1}{2} \left| \frac{1 - e^{−\beta}}{1 + e^{−\beta}} \right| \\
+    &amp; = \frac{1}{2} - \frac{1}{2} \int_0^1 \left| \frac{1 - e^{−\beta x}}{1 + e^{−\beta x}} \right| \text dx
 \end{align*}
 $$<p>Para dar una descripción más específica del error Bayes hemos de distinguir casos según el valor absoluto. Veamos cuando el interior toma valor positivo:</p>
 $$
@@ -14628,32 +14634,31 @@ $$
     &amp; \leftrightarrow −\beta &lt; 0 \\
     &amp; \leftrightarrow \beta &gt; 0 \\
 \end{align*}
-$$<p>Continuemos pues los calculos anteriores para $\beta &gt; 0$:</p>
+$$<p>Calculemos por separado la integral centrándonos en el caso positivo ($\beta &gt; 0$):</p>
 $$
 \begin{align*}
-    L^* &amp; = \frac{1}{2} - \frac{1}{2} \left| \frac{1 - e^{−\beta}}{1 + e^{−\beta}} \right| \\
-    &amp; = \frac{1}{2} - \frac{1}{2} \frac{1 - e^{−\beta}}{1 + e^{−\beta}} \\
-    &amp; = \frac{1}{2} \left( 1 - \frac{1 - e^{−\beta}}{1 + e^{−\beta}} \right) \\
-    &amp; = \frac{1}{2} \frac{2e^{−\beta}}{1 + e^{−\beta}} \\
-    &amp; = \frac{e^{−\beta}}{1 + e^{−\beta}} \\
+    \int_{x \in \mathbb R}\frac{1 - e^{−\beta x}}{1 + e^{−\beta x}} f_X(x) \text dx
+    &amp; = \int_0^1 \frac{1}{1 + e^{−\beta x}} \text dx - \int_0^1 \frac{e^{−\beta x}}{1 + e^{−\beta x}} \text dx \\
+    &amp; \stackrel{(*)}{=} \int_1^{e^{−\beta}} \frac{1}{1 + u} \frac{\text du}{-\beta u} - \frac{1}{-\beta} \int_0^1 \frac{-\beta e^{−\beta x}}{1 + e^{−\beta x}} \text dx \\
+    &amp; = \frac{1}{-\beta} \int_1^{e^{−\beta}} \left(\frac{1}{u} - \frac{1}{1 + u} \right)\text du - \frac{1}{-\beta} \left( \log\left(1 + e^{−\beta x}\right) \right]^1_0 \text dx \\
+    &amp; = \frac{1}{-\beta} \left(\log u - \log(1+u)\right]_1^{e^{−\beta}} - \frac{1}{-\beta} \left( \log\left(1 + e^{−\beta x}\right) \right]^1_0 \text dx \\
+    &amp; = \frac{1}{-\beta} \left(\log e^{−\beta x} - \log(1+e^{−\beta x})\right]_0^1 - \frac{1}{-\beta} \left( \log\left(1 + e^{−\beta x}\right) \right]^1_0 \text dx \\
+    &amp; = \frac{1}{-\beta} \left(−\beta x - 2 \log(1+e^{−\beta x})\right]_0^1 \\
+    &amp; = 1 + \frac{2}{\beta} \left( \log(1+e^{−\beta}) - \log 2)\right) \\
+    &amp; = 1 + \frac{2}{\beta} \log \frac{1+e^{−\beta}}{2} \\
 \end{align*}
-$$<p>Y lo repetimos para $\beta \le 0$:</p>
+$$<p>Donde en $(*)$ hemos aplicado el cambio de variable $u=e^{-\beta x}, \text du = -\beta e^{-\beta x} \text dx$. Adicionalmente, en $(*)$ hemos asumido que $\beta \neq 0$ pues dividimos por dihco valor. Es sencillo darse cuenta de que si sustitumos $\beta=0$ en la expresión inicial de $L^*$ obtenemos $L^* = \frac{1}{2}$.</p>
+<p>Finalmente podemos obtener una expresión reducida para el error Bayes distinguiendo casos:</p>
 $$
-\begin{align*}
-    L^* &amp; = \frac{1}{2} - \frac{1}{2} \left| \frac{1 - e^{−\beta}}{1 + e^{−\beta}} \right| \\
-    &amp; = \frac{1}{2} - \frac{1}{2} \frac{e^{−\beta} - 1}{1 + e^{−\beta}} \\
-    &amp; = \frac{1}{2} \left( 1 - \frac{e^{−\beta} - 1}{1 + e^{−\beta}} \right) \\
-    &amp; = \frac{1}{2} \frac{2}{1 + e^{−\beta}} \\
-    &amp; = \frac{1}{1 + e^{−\beta}} \\
-\end{align*}
-$$<p>Agrupamos ambos cálculos en una única expresión final:</p>
-$$
-    L^* = \begin{cases}
-        \frac{e^{−\beta}}{1 + e^{−\beta}} \quad &amp; \text{si } \beta &gt; 0 \\
-        \frac{1}{1 + e^{−\beta}} \quad &amp; \text{si } \beta \le 0 \\
-    \end{cases} \\
-    = \frac{e^{\min\{-\beta, 0\}}}{1 + e^{−\beta}}
-$$<p>Finalmente, realicemos una rápida comprobación de que nuestros cálculos son correctos computando el error Bayes basándonos unicamente en las distribuciones marginales:</p>
+L^* = \frac{1}{2} - \frac{1}{2} \int_0^1 \left| \frac{1 - e^{−\beta x}}{1 + e^{−\beta x}} \right| \text dx = 
+\begin{cases}
+    \frac{1}{2} - \frac{1}{2} \left( 1 + \frac{2}{\beta} \log \frac{1+e^{−\beta}}{2} \right) = - \frac{1}{\beta} \log \frac{1+e^{−\beta}}{2} \quad &amp; \text{si } \beta &gt; 0 \\
+        \frac{1}{2}  \quad &amp; \beta = 0 \\
+    \frac{1}{2} + \frac{1}{2} \left( 1 + \frac{2}{\beta} \log \frac{1+e^{−\beta}}{2} \right) = 1 + \frac{1}{\beta} \log \frac{1+e^{−\beta}}{2} \quad &amp; \text{si } \beta &lt; 0 \\
+\end{cases}
+$$<p>Podemos visualizar este error utilizando <a href="https://www.geogebra.org/graphing/vebjrwmy">Geogebra</a>:</p>
+<p><img src="figures/4_2.PNG" alt="figures/4_2"></p>
+<p>Finalmente, realicemos una rápida comprobación de que nuestros cálculos son correctos computando el error Bayes basándonos unicamente en las distribuciones marginales:</p>
 $$
 \begin{align*}
     L^* &amp; = \frac{1}{2} - \frac{1}{4} \int_{x \in \mathbb R} \left|f_0(x) - f_1(x) \right| \text dx\\
@@ -14661,7 +14666,7 @@ $$
     &amp; = \frac{1}{2} - \frac{1}{4} \int_{x \in \mathbb R} 2 f_X(x) \left| 1 - \frac{1}{1 + e^{-\beta x}} - \frac{1}{1 + e^{-\beta x}} \right| \text dx \\
     &amp; = \frac{1}{2} - \frac{1}{2} \int_{x \in \mathbb R} f_X(x) \left| 1 - \frac{2}{1 + e^{-\beta x}}\right| \text dx \\
     &amp; = \frac{1}{2} - \frac{1}{2} \int_0^1 \left| \frac{-1 + e^{-\beta}}{1 + e^{-\beta}}\right| \text dx \\
-    &amp; = \frac{1}{2} - \frac{1}{2} \left| \frac{1 - e^{-\beta}}{1 + e^{-\beta}}\right|,
+    &amp; = \frac{1}{2} - \frac{1}{2} \int_0^1 \left| \frac{1 - e^{-\beta}}{1 + e^{-\beta}}\right| \text dx, \\
 \end{align*}
 $$<p>que coincide con el primer valor computado para $L^*$ al principio del apartado.</p>
 
@@ -14676,46 +14681,247 @@ $$<p>Computemos este valor para nuestro caso particular:</p>
 $$
 \begin{align*}
     L_{1NN} &amp; = 2 \int_{x \in \mathbb R} f_X(x) \; \eta(x) \; (1 - \eta(x)) \text dx \\
-    &amp; = 2 \int_0^1  \; \frac{1}{1 + e^{-\beta}} \left(1 - \frac{1}{1 + e^{-\beta}}\right) \text dx\\
-    &amp; = \frac{2 e^{-\beta}}{(1 + e^{-\beta})^2} \\
+    &amp; = 2 \int_0^1  \; \frac{1}{1 + e^{-\beta x}} \left(1 - \frac{1}{1 + e^{-\beta x}}\right) \text dx\\
+    &amp; = 2 \int_0^1  \frac{e^{-\beta x}}{(1 + e^{-\beta x})^2} \text dx \\
+    &amp; = \frac{2}{-\beta} \int_0^1 \frac{-\beta e^{-\beta x}}{(1 + e^{-\beta x})^2} \text dx \\
+    &amp; = \frac{2}{-\beta} \left( \frac{-1}{1 + e^{-\beta x}} \right]_0^1 \\
+    &amp; = \frac{2}{\beta} \left( \frac{1}{1 + e^{-\beta}} - \frac{1}{2} \right) \\
+    &amp; = \frac{2}{\beta} \left( \frac{2}{1 + e^{-\beta}} - 1 \right) \\
+    &amp; = \frac{1}{\beta} \frac{1 - e^{-\beta}}{1 + e^{-\beta}} \\
+    &amp; = \frac{1}{\beta} \frac{e^{\beta} - 1}{e^{\beta} + 1} = \frac{1}{\beta} \tanh \left( \frac{\beta}{2}\right)\\
 \end{align*}
-$$<p>A continuación comparamos este valor con el error Bayes calculado en el apartado anterior. En particular mostraremos que se cumple la siguiente desigualdad:</p>
+$$<p>Podemos comprobar que el resultado de esta integral es correcto utilizando <a href="https://www.wolframalpha.com/input/?i2d=true&amp;i=2Integrate%5BDivide%5BPower%5Be%2C-bx%5D%2CPower%5B%5C%2840%291%2BPower%5Be%2C-bx%5D%5C%2841%29%2C2%5D%5D%2C%7Bx%2C0%2C1%7D%5D">WolframAlpha</a>. De nuevo, hemos asumido que $\beta \neq 0$ cuando dividimos por dicho valor. Mirando la expresión inicial de $L_{1NN}$ es sencillo darse cuenta de que $L_{1NN}=\frac{1}{2}$ para este valor crítico.</p>
+<p>A continuación comparamos este valor con el error Bayes calculado en el apartado anterior. En particular mostraremos que se cumple la siguiente desigualdad:</p>
 $$
     L^* \le L_{1NN} \le 2 L^* (1 - L^*)
-$$<p><strong>Caso 1.- $L^* \le L_{1NN}$, $\beta &gt; 0$:</strong></p>
-$$
-\begin{align*}
-    L^* \le L_{1NN} &amp; \leftrightarrow \frac{e^{-\beta}}{1 + e^{-\beta}} \le \frac{2 e^{-\beta}}{(1 + e^{-\beta})^2} \\
-    &amp; \leftrightarrow 1 + e^{-\beta} \le 2 \\
-    &amp; \leftrightarrow e^{-\beta} \le 1 \\
-    &amp; \leftrightarrow -\beta \le 0 \\
-    &amp; \leftrightarrow \beta \ge 0 \\
-\end{align*}
-$$<p>Donde añadimos el caso $\beta = 0$ verificando que se cumple la igualdad, $L^* = L_{1NN}$.</p>
-<p><strong>Caso 2.- $L^* \le L_{1NN}$, $\beta \le 0$:</strong></p>
-$$
-\begin{align*}
-    L^* \le L_{1NN} &amp; \leftrightarrow \frac{1}{1 + e^{-\beta}} \le \frac{2 e^{-\beta}}{(1 + e^{-\beta})^2} \\
-    &amp; \leftrightarrow 1 + e^{-\beta} \le 2 e^{-\beta} \\
-    &amp; \leftrightarrow 1 \le e^{-\beta} \\
-    &amp; \leftrightarrow 0 \le -\beta \\
-    &amp; \leftrightarrow \beta &lt; 0  \\
-\end{align*}
-$$<p><strong>Caso 3.- $L_{1NN} \le 2 L^* (1-L^*)$, $\beta &gt; 0$:</strong></p>
-$$
-\begin{align*}
-    L_{1NN} \le 2 L^* (1-L^*) &amp; \longleftrightarrow \frac{2 e^{-\beta}}{(1 + e^{-\beta})^2} \le 2 \frac{e^{-\beta}}{1 + e^{-\beta}} \left( 1 - \frac{e^{-\beta}}{1 + e^{-\beta}}\right) = \frac{2 e^{-\beta}}{(1 + e^{-\beta})^2}
-\end{align*}
-$$<p><strong>Caso 4.- $L^* \le L_{1NN}$, $\beta \le 0$:</strong></p>
-$$
-\begin{align*}
-    L_{1NN} \le 2 L^* (1-L^*) &amp; \longleftrightarrow \frac{2 e^{-\beta}}{(1 + e^{-\beta})^2} \le 2 \frac{1}{1 + e^{-\beta}} \left( 1 - \frac{1}{1 + e^{-\beta}}\right) = \frac{2 e^{-\beta}}{(1 + e^{-\beta})^2}
-\end{align*}
-$$<p>Hemos demostrado que:</p>
-$$
-    L^* \le L_{1NN} = 2 L^* (1 - L^*).
-$$
+$$<p>Para ello mostramos una gráfica en <code>R</code> de estas variables en función de $\beta$:</p>
+
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-r"><pre><span></span><span class="n">x1</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">-40</span><span class="o">:</span><span class="m">-1</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">40</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">-40</span><span class="o">:</span><span class="m">40</span><span class="p">)</span>
+<span class="n">L_star</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span> <span class="o">+</span> <span class="m">1</span><span class="o">/</span><span class="n">x1</span> <span class="o">*</span> <span class="nf">log</span><span class="p">(</span> <span class="p">(</span><span class="m">1</span><span class="o">+</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x1</span><span class="p">))</span><span class="o">/</span><span class="m">2</span> <span class="p">),</span> <span class="m">1</span><span class="o">/</span><span class="m">2</span><span class="p">,</span>
+            <span class="m">-1</span><span class="o">/</span><span class="n">x2</span> <span class="o">*</span><span class="nf">log</span><span class="p">(</span> <span class="p">(</span><span class="m">1</span><span class="o">+</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x2</span><span class="p">))</span><span class="o">/</span><span class="m">2</span> <span class="p">))</span>
+<span class="n">L_1NN</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">tanh</span><span class="p">(</span><span class="n">x1</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="o">/</span><span class="n">x1</span><span class="p">,</span> <span class="m">1</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="nf">tanh</span><span class="p">(</span><span class="n">x2</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="o">/</span><span class="n">x2</span><span class="p">)</span>
+<span class="n">L_star_upper_bound</span> <span class="o">&lt;-</span> <span class="m">2</span><span class="o">*</span><span class="n">L_star</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">L_star</span><span class="p">)</span>
+
+<span class="nf">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L_star</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;l&quot;</span><span class="p">,</span><span class="n">col</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="s">&quot;L* and L_1NN comparisson&quot;</span><span class="p">,</span>
+     <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;β&quot;</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">las</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L_1NN</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<span class="nf">lines</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L_star_upper_bound</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;green&quot;</span><span class="p">)</span>
+
+<span class="nf">legend</span><span class="p">(</span><span class="s">&quot;topright&quot;</span><span class="p">,</span><span class="n">col</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;green&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">,</span> <span class="s">&quot;red&quot;</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;2 L* (1-L*)&quot;</span><span class="p">,</span> <span class="s">&quot;L_1NN&quot;</span><span class="p">,</span> <span class="s">&quot;L*&quot;</span><span class="p">),</span>
+       <span class="n">lwd</span><span class="o">=</span><span class="m">3</span><span class="p">,</span> <span class="n">bty</span> <span class="o">=</span> <span class="s">&quot;n&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+
+<div class="jp-RenderedImage jp-OutputArea-output ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAAAOVBMVEUAAAAAAP8A/wBNTU1o
+aGh8fHyMjIyampqnp6eysrK9vb3Hx8fQ0NDZ2dnh4eHp6enw8PD/AAD////zEs4UAAAACXBI
+WXMAABJ0AAASdAHeZh94AAAgAElEQVR4nO3d64KaOhRA4ZzB2zheKO//sEdABRSUy2Yn2Vnf
+j7bSUVCzJhhtxxUAFnO+DwCwgJAAAYQECCAkQAAhAQIICRBASIAAQgIEEBIggJAAAYQECCAk
+QAAhAQIICRBASIAAQgIEEBIggJAAAYQECCAkQAAhAQIICRBASIAAQgIEEBIggJAAAYQECCAk
+QAAhAQIICRBASIAAQgIEEBIggJAAAYQECCAkQAAhAQIICRBASIAAQgIEEBIggJC+cc69XF54
+E683+Gr3+PvbF/51rvK2YVUa+7CDx+qbt5CyhTfxZYCeXCukrHOVtw2rIqQpeKy+6Yyn30O+
+2+WH3wU38WWAlh01IblD+ypvG1ZFSFPwWH3TGU+b25yQObdZcBMfB+h157ohuWvrKm8bEAye
+j286YzY/753bn/PW3/+VY39zeI7v0/b2FZf67677zG2OE0K6/d22G9KudZW3Dc/DOtwK357u
+l063Y3T7U7O348ZtzkVxzNz23N7o9tfe+3DdlBPffR/5b3lEu/rFWedCz57adz4thPRNd8xe
+s5tra8PW3Z3rrz3Ul6rBdK7/vHUTQto1f18O7uft9m54HlS9o0PniHaPG6k3XA/Pwyw31lNf
+fVde70NZ5WMfj9sut3Qv9OypfecTQ0jfdMfsxp1O7TO7421Q3eanQz2a3NO+/MusuTx4g13l
+rNIO6VKfRjYhdTfcPfdTzg275z4fc1ct69tY3Vjfffh77GNf/Tm/NXN8uTC4p/rOJ4aQvnn5
+5n8bM/vWjLTpvGgpx+upGm/lpb/60ikbH1Ln78s/7Kox24TU3VC7hZBdquG9qRcrjvntHOze
+lasqOZbNXKrf7jeUnesjO/Xch23euVj+ZV7deOdCz55adz41Kd7nacaNi+eoK4dUXl/a1Zda
+C9qjbrATUl6teLdC6myo3feTb36v1Tg+VlsP9czgnids3XPEv/uRtWaPzn14XCy/CzxeBXUv
+9OypdedTk+J9nubruLj+HbbuOQhb1+kUMf4Gu1f7LV/6tELqbOi5wduFeink2jmI3t/KP2x6
+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
+CCAkQMD/MMNBc+SSdZwAAAAASUVORK5CYII="
+width=420
+height=420
+>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14800,13 +15006,14 @@ Formula un modelo de regresión logística para analizar estos datos y estima la
 <p>Computaremos la probabilidad de muerte como el cociente del número de muertos entre el número de insectos y utilizaremos un modelo de regresión logística:</p>
 $$
     \eta(x) = \mathbb P[Y=1 | X] = f(\beta_0 + x\beta_1) = \frac{1}{1 + e^{-\beta_0 -x \beta_1}}    
-$$<p>Para obtener los valores de $\beta_0$ y $\beta_1$ ajustamos el modelo haciendo uso de la función de <code>R</code> <code>glm()</code>, que hace referencia a <em>generalized linear model</em>. Este modelo genérico incluye a la regresión logística añadiendo <code>family=binomial</code> como parámetro. En primer lugar, cargamos los datos y computamos el porcentaje de escarabajos muertos que utilizaremos para la predicción.</p>
+$$<p>Para obtener los valores de $\beta_0$ y $\beta_1$ ajustamos el modelo haciendo uso de la función de <code>R</code> <code>glm()</code>, que hace referencia a <em>generalized linear model</em>. Este modelo genérico incluye a la regresión logística añadiendo <code>family=quasibinomial</code> como parámetro. Este valor es equivalente a la familia <code>binomial</code> pero utilizando números en coma flotante como entrada en vez de valores entero <code>0,1</code>. El modelo no varía pero evitamos un <em>warning</em> de R.</p>
+<p>En primer lugar, cargamos los datos y computamos el porcentaje de escarabajos muertos que utilizaremos para la predicción.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-r"><pre><span></span><span class="c1"># Leemos los datos y computamos el porcentaje de escarabajos muertos</span>
@@ -14868,11 +15075,11 @@ $$<p>Para obtener los valores de $\beta_0$ y $\beta_1$ ajustamos el modelo hacie
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-r"><pre><span></span><span class="c1"># Definimos y ajustamos el modelo</span>
-<span class="n">reg</span> <span class="o">=</span> <span class="nf">glm</span><span class="p">(</span><span class="n">porcentaje_muertos</span><span class="o">~</span><span class="n">dosis</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">binomial</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">escarabajos_df</span><span class="p">)</span>
+<span class="n">reg</span> <span class="o">=</span> <span class="nf">glm</span><span class="p">(</span><span class="n">porcentaje_muertos</span><span class="o">~</span><span class="n">dosis</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">quasibinomial</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">escarabajos_df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">reg</span><span class="p">)</span>
 </pre></div>
 
@@ -14892,25 +15099,12 @@ $$<p>Para obtener los valores de $\beta_0$ y $\beta_1$ ajustamos el modelo hacie
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>Warning message in eval(family$initialize):
-&#34;non-integer #successes in a binomial glm!&#34;
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
 
 
 <div class="jp-RenderedText jp-OutputArea-output " data-mime-type="text/plain">
 <pre>
 Call:
-glm(formula = porcentaje_muertos ~ dosis, family = binomial, 
+glm(formula = porcentaje_muertos ~ dosis, family = quasibinomial, 
     data = escarabajos_df)
 
 Deviance Residuals: 
@@ -14918,15 +15112,17 @@ Deviance Residuals:
 -0.20933  -0.04659   0.10858   0.16310   0.20807  
 
 Coefficients:
-            Estimate Std. Error z value Pr(&gt;|z|)
-(Intercept)   -60.46      40.05  -1.509    0.131
-dosis          34.12      22.51   1.516    0.130
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  -60.459      6.701  -9.023 0.000104 ***
+dosis         34.121      3.766   9.059 0.000101 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-(Dispersion parameter for binomial family taken to be 1)
+(Dispersion parameter for quasibinomial family taken to be 0.02798728)
 
     Null deviance: 4.71186  on 7  degrees of freedom
 Residual deviance: 0.18871  on 6  degrees of freedom
-AIC: 8.0339
+AIC: NA
 
 Number of Fisher Scoring iterations: 5
 </pre>
@@ -14950,7 +15146,7 @@ $$<p>Recordemos que predeciremos que el escarabajo muere si $\eta(x) \ge \frac{1
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-r"><pre><span></span><span class="n">datos</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">dosis</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">1.8</span><span class="p">))</span>
@@ -14993,7 +15189,7 @@ $$<p>Recordemos que predeciremos que el escarabajo muere si $\eta(x) \ge \frac{1
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-r"><pre><span></span><span class="n">datos</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">dosis</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span> <span class="m">2.5</span><span class="p">,</span> <span class="m">0.0001</span><span class="p">))</span>
